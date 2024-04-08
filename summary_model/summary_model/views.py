@@ -1,16 +1,19 @@
-from .models import Meeting, Transcript
-import requests, json
-import torch
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from .tasks import generate_summary
+import logging
+logger = logging.getLogger('django')
 
 class Summary(APIView):
-    def extract_text_from_transcript(self, transcript):
-        try:
-            data = json.loads(transcript)
-            text_values = [item["text"] for item in data]
-            return " ".join(text_values)
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
-            return None
+    def get(self,request,meeting_id):
+        data = {
+            'success':True,
+        }
+        try :
+            generate_summary.delay(meeting_id)
+            return Response(data)
+        except Exception as err :
+            data['success'] = False
+            data['error'] = str(err)
+            logger.warning(str(err))
+            return Response(data)
