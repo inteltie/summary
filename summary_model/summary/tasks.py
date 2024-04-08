@@ -2,7 +2,7 @@ from .models import Meeting, Transcript , Summary ,MeetingMeetingprocessing, Dec
 import requests, json
 import torch
 from transformers import pipeline
-from .celery import app
+from summary_model.celery import app
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 def extract_text_from_transcript(transcript):
