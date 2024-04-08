@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'actionitems.wsgi.application'
+WSGI_APPLICATION = 'summary_model.wsgi.application'
 
 
 # Database
