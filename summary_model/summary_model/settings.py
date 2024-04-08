@@ -140,3 +140,10 @@ CORS_ORIGIN_ALLOW_ALL = os.environ.get('CORS_ORIGIN_ALLOW_ALL') == 'True'
 CORS_ORIGIN_WHITELIST = [
     os.environ.get('IP1'),
 ]
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CACHE_TTL = 60 * 30
