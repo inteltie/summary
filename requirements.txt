@@ -1,0 +1,12 @@
+Django
+django-cors-headers
+djangorestframework
+requests
+mysqlclient
+gunicorn
+transformers
+celery
+redis
+flower
+django-celery-results
+django-redis
