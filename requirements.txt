@@ -10,3 +10,5 @@ redis
 flower
 django-celery-results
 django-redis
+torch
+torchvision
