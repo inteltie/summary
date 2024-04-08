@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     os.environ.get('HOST_1'),
     os.environ.get('HOST_2'),
     os.environ.get('HOST_3'),
+    os.environ.get('HOST_4'),
 ]
 
 
