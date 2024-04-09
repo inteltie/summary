@@ -75,7 +75,7 @@ def generate_summary(self,meeting_id):
         summary = Summary.objects.create(meeting=meeting,transcript=trans,summary_text=summary_text)
         mp.reason = 'Summary Completed'
         mp.save()
-        important_announcements(final_text=summary_text,meeting=meeting,trans=trans)
+        #important_announcements(final_text=summary_text,meeting=meeting,trans=trans)
     except Exception as err :
         print('ERROR::',err)
         mp.status = "PARTIAL_FAILURE"
