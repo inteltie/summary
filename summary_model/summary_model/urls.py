@@ -19,5 +19,5 @@ from django.urls import path
 from summary.views import *
 
 urlpatterns = [
-    path('api/v1/meetings/<int:meeting_id>/action_items/', Summary.as_view(), name='action_items'),
+    path('api/v1/meetings/<int:meeting_id>/summary/', Summary.as_view(), name='action_items'),
 ]

@@ -34,6 +34,7 @@ def important_announcements(final_text,meeting,trans):
         print("Key Points:", summary[0]['summary_text'])
     obj_list.pop()
     importantdecisions = json.dumps(obj_list)
+    print(importantdecisions)
     Decision.objects.create(meeting=meeting,transcript=trans,decision_text=importantdecisions)
     return True
 
@@ -73,6 +74,7 @@ def generate_summary(self,meeting_id):
         mp.save()
         important_announcements(final_text=summary_text,meeting=meeting,trans=trans)
     except Exception as err :
+        print('ERROR::',err)
         mp.status = "PARTIAL_FAILURE"
         mp.reason = str(err)
         mp.save()
