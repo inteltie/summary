@@ -23,6 +23,7 @@ def split_into_chunks(text, num_chunks=5):
 def important_announcements(final_text,meeting,trans):
     #transcript = extract_text_from_transcript(final_text)
     chunks = split_into_chunks(final_text, 4)
+    print('final_text:',final_text,chunks)
     model_dir = '/home/ubuntu/summary/action_items_sentence/'
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_dir)
