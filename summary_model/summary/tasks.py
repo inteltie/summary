@@ -13,7 +13,7 @@ def extract_text_from_transcript(transcript):
     except json.JSONDecodeError as e:
         return None
 
-def split_into_chunks(self,text, num_chunks=5):
+def split_into_chunks(text, num_chunks=5):
         sentences = text.split('.')
         chunk_size = len(sentences) // num_chunks
         return ['.'.join(sentences[i:i + chunk_size]) for i in range(0, len(sentences), chunk_size)]
