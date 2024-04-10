@@ -142,9 +142,12 @@ CORS_ORIGIN_WHITELIST = [
     os.environ.get('IP1'),
 ]
 
+X_API_KEY = os.environ.get('X_API_KEY')
+CLIENT_SECRET = [os.environ.get('CLIENT_SECRET_1')]
+
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 CACHE_TTL = 60 * 30

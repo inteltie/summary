@@ -2,9 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .tasks import generate_summary
 import logging
+from .custom_permission import ApiKeyPermission
 logger = logging.getLogger('django')
 
 class Summary(APIView):
+
+    permission_classes = [ApiKeyPermission]
+
     def get(self,request,meeting_id):
         data = {
             'success':True,
