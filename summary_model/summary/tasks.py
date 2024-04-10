@@ -66,7 +66,7 @@ def generate_summary(self,meeting_id):
         full_summary = ''
 
         for batch in batched_chunks:
-            batch_summaries = summarizer(batch, max_length=max_chunk_length // 6, do_sample=True)
+            batch_summaries = summarizer(batch, max_length=int(batch/6), do_sample=True)
 
             for summary in batch_summaries:
                 full_summary += summary['summary_text'] + " "
