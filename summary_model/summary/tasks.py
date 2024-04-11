@@ -88,7 +88,7 @@ def generate_summary(self,meeting_id):
 
 
 
-def update_summary(self,meeting_id):
+def update_summary(meeting_id):
     meeting = Meeting.objects.get(id=meeting_id)
     try :
         trans = Transcript.objects.get(meeting=meeting)
