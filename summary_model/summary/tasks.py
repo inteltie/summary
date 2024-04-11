@@ -9,6 +9,7 @@ def extract_text_from_transcript(transcript):
     try:
         data = json.loads(transcript)
         text_values = [item["text"] for item in data]
+        #text_values = [(item["speaker"].split(',')[0])+' said :'+   item["text"] for item in data]
         return " ".join(text_values)
     except json.JSONDecodeError as e:
         return None
@@ -48,7 +49,9 @@ def generate_summary(self,meeting_id):
     mp = MeetingMeetingprocessing.objects.get(meeting=meeting)
     try :
         trans = Transcript.objects.get(meeting=meeting)
+        #transcript_text = extract_text_from_transcript(trans.raw_transcript).replace('Unidentified ','')
         transcript_text = extract_text_from_transcript(trans.raw_transcript)
+        transcript_text = f"We are starting this meeting with an agenda {meeting.description}"+transcript_text
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         summarizer = pipeline("summarization", model="/home/ubuntu/summary/meeting_summary_model", device=device)
 
@@ -66,7 +69,7 @@ def generate_summary(self,meeting_id):
         full_summary = ''
 
         for batch in batched_chunks:
-            batch_summaries = summarizer(batch, max_length=int(batch/6), do_sample=True)
+            batch_summaries = summarizer(batch, max_length=max_chunk_length // 6, do_sample=True)
 
             for summary in batch_summaries:
                 full_summary += summary['summary_text'] + " "
@@ -82,3 +85,44 @@ def generate_summary(self,meeting_id):
         mp.reason = str(err)
         mp.save()
     return True
+
+
+
+def update_summary(self,meeting_id):
+    meeting = Meeting.objects.get(id=meeting_id)
+    try :
+        trans = Transcript.objects.get(meeting=meeting)
+        #transcript_text = extract_text_from_transcript(trans.raw_transcript).replace('Unidentified ','')
+        transcript_text = extract_text_from_transcript(trans.raw_transcript)
+        transcript_text = f"We are starting this meeting with an agenda {meeting.description} "+transcript_text
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        summarizer = pipeline("summarization", model="/home/ubuntu/summary/meeting_summary_model", device=device)
+
+        max_chunk_length = 512
+        max_summary_length = 1028
+
+        # Split transcript into chunks
+        words = transcript_text.split()
+        chunks = [' '.join(words[i:i + max_chunk_length]) for i in range(0, len(words), max_chunk_length)]
+
+        # Process chunks in batches for summarization
+        chunk_batch_size = 4  # Adjust batch size as needed
+        batched_chunks = [chunks[i:i + chunk_batch_size] for i in range(0, len(chunks), chunk_batch_size)]
+
+        full_summary = ''
+
+        for batch in batched_chunks:
+            batch_summaries = summarizer(batch, max_length=max_chunk_length // 6, do_sample=True)
+
+            for summary in batch_summaries:
+                full_summary += summary['summary_text'] + "\n"
+
+        summary_text = full_summary
+        summary = Summary.objects.get(meeting=meeting)
+        summary.summary_text=summary_text
+        summary.save()
+        return summary_text
+        #important_announcements(final_text=summary_text,meeting=meeting,trans=trans)
+    except Exception as err :
+        print('ERROR::',err)
+        return str(err)
