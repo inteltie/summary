@@ -61,7 +61,7 @@ class Summary(APIView):
 
             for chunk in chunks:
                 output_items = []
-                output = llm(f"[INST]Extract summary of the following text: {chunk}[/INST]") 
+                output = llm(f"[INST]Summarize the following text in third-person without using speaker labels or introductory phrases: {chunk}[/INST]") 
                 #print(output)
                 print()
                 output_items.extend(output)
