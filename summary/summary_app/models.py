@@ -10,7 +10,7 @@ from django.db import models
 
 class ActionItem(models.Model):
     id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=1000)
     priority = models.CharField(max_length=100, blank=True, null=True)
     start_date = models.DateTimeField()
     end_date = models.DateField(blank=True, null=True)
@@ -403,7 +403,7 @@ class MeetingNotes(models.Model):
 
 class MeetingNotification(models.Model):
     id = models.BigAutoField(primary_key=True)
-    notification_id = models.CharField(max_length=100)
+    notification_id = models.CharField(max_length=500)
     error_message = models.TextField()
     meeting = models.OneToOneField(Meeting, models.DO_NOTHING)
     user_id = models.CharField(max_length=100)

@@ -1,6 +1,5 @@
 from rest_framework.permissions import BasePermission
-from summary_model.settings import X_API_KEY,CLIENT_SECRET
-
+from summary.settings import X_API_KEY, CLIENT_SECRET
 
 class ApiKeyPermission(BasePermission):
     def has_permission(self, request, view):
