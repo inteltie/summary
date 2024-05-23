@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Meeting, Transcript
+from .models import Meeting, Transcript, Summary
 import requests, json
 import torch
 import re
@@ -10,7 +10,7 @@ from ctransformers import AutoModelForCausalLM
 import logging
 # from .custom_permission import ApiKeyPermission
 logger = logging.getLogger('django')
-
+ 
 
 class Summary(APIView):
     # permission_classes = [ApiKeyPermission]
@@ -61,7 +61,7 @@ class Summary(APIView):
 
             for chunk in chunks:
                 output_items = []
-                output = llm(f"[INST]Extract summary of the following text: {chunk}[/INST]") 
+                output = llm(f"[INST]Summarize the following text in third-person without using speaker labels or introductory phrases: {chunk}[/INST]") 
                 #print(output)
                 print()
                 output_items.extend(output)
@@ -71,11 +71,17 @@ class Summary(APIView):
                 print(output_i)
 
                 if output_items:  # Check if output_items is not empty
+                    output_i = re.sub(r'\s+', ' ', output_i.replace('\n', ' ')).strip()
                     summary.append(output_i)
 
-            out = ' '.join(summary)
+            out = '\n\n'.join(summary)
 
-            return Response({"summary": out})
+            try:
+                summary_obj = Summary(meeting=meeting_obj, summary_text=out, transcript=transcript_obj)
+                summary_obj.save()  # Directly saving the new summary
+                return Response({"summary": out})
+            except Exception as e:
+                return Response({"error": str(e)}, status=400)
 
         except Exception as e:
             # Handle errors
