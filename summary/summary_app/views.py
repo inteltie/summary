@@ -77,12 +77,19 @@ class Summary(APIView):
             out = '\n\n'.join(summary)
 
             try:
-                summary_obj = Summary(meeting=meeting_obj, summary_text=out, transcript=transcript_obj)
-                summary_obj.save()  # Directly saving the new summary
+                summary_obj = Summary.objects.filter(meeting=meeting_obj).first()
+                if not summary_obj:
+                    summary_obj = Summary(meeting=meeting_obj)
+                    logger.info("Creating new summary.")
+                else:
+                    logger.info("Updating existing summary.")
+
+                summary_obj.summary_text = out
+                summary_obj.save()
                 return Response({"summary": out})
             except Exception as e:
                 return Response({"error": str(e)}, status=400)
-
+                
         except Exception as e:
             # Handle errors
             return Response({"error": str(e)}, status=400)
