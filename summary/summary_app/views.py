@@ -65,12 +65,12 @@ class SummaryView(APIView):
 
             final_output = '\n\n'.join(summary)
 
-            try:
-                summary_obj = Summary(meeting=meeting_obj, summary_text=final_output, transcript=transcript_obj)
-                summary_obj.save()
-                return Response({"summary": final_output})
-            except Exception as e:
-                return Response({"error": str(e)}, status=400)
+            # Update or create summary
+            summary_obj, created = Summary.objects.update_or_create(
+                meeting=meeting_obj,
+                defaults={'summary_text': final_output, 'transcript': transcript_obj}
+            )
 
+            return Response({"summary": final_output})
         except Exception as e:
             return Response({"error": str(e)}, status=400)
