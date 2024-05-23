@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Meeting, Transcript
+from .models import Meeting, Transcript, Summary
 import requests, json
 import torch
 import re
@@ -74,8 +74,14 @@ class Summary(APIView):
                     summary.append(output_i)
 
             out = ' '.join(summary)
+            out = re.sub(r'\s+', ' ', out.replace('\n', ' ')).strip()
 
-            return Response({"summary": out})
+            try:
+                summary_obj = Summary(meeting=meeting_obj, summary_text=out, transcript=transcript_obj)
+                summary_obj.save()  # Directly saving the new summary
+                return Response({"summary": out})
+            except Exception as e:
+                return Response({"error": str(e)}, status=400)
 
         except Exception as e:
             # Handle errors
