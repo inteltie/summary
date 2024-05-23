@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger('django')
  
 
-class Summary(APIView):
+class SummaryView(APIView):
     # permission_classes = [ApiKeyPermission]
 
     def eliminate_repeats(self, text):
@@ -43,53 +43,34 @@ class Summary(APIView):
 
     def get(self, request, meeting_id):
         try:
-            # Retrieve the meeting object
             meeting_obj = get_object_or_404(Meeting, id=meeting_id)
             transcript_obj = Transcript.objects.get(meeting=meeting_obj)
             raw_transcript = transcript_obj.raw_transcript
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             transcript_text = self.extract_text_from_transcript(raw_transcript)
 
             llm = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.2-GGUF", model_file="mistral-7b-instruct-v0.2.Q4_K_M.gguf", gpu_layers=50)
-            #llm.to(device)
             max_chunk_length = 256
             summary = []
-            output_items = []
 
             words = transcript_text.split()
             chunks = [' '.join(words[i:i + max_chunk_length]) for i in range(0, len(words), max_chunk_length)]
 
             for chunk in chunks:
-                output_items = []
-                output = llm(f"[INST]Summarize the following text in third-person without using speaker labels or introductory phrases: {chunk}[/INST]") 
-                #print(output)
-                print()
-                output_items.extend(output)
-                output_i = ''.join(output_items)
+                output = llm(f"[INST]Summarize the following text in third-person without using speaker labels or introductory phrases: {chunk}[/INST]")
+                output_i = ''.join(output)
                 output_i = self.remove_summary_prefix(output_i)
                 output_i = self.eliminate_repeats(output_i)
-                print(output_i)
+                output_i = re.sub(r'\s+', ' ', output_i.replace('\n', ' ')).strip()
+                summary.append(output_i)
 
-                if output_items:  # Check if output_items is not empty
-                    output_i = re.sub(r'\s+', ' ', output_i.replace('\n', ' ')).strip()
-                    summary.append(output_i)
-
-            out = '\n\n'.join(summary)
+            final_output = '\n\n'.join(summary)
 
             try:
-                summary_obj = Summary.objects.filter(meeting=meeting_obj).first()
-                if not summary_obj:
-                    summary_obj = Summary(meeting=meeting_obj)
-                    logger.info("Creating new summary.")
-                else:
-                    logger.info("Updating existing summary.")
-
-                summary_obj.summary_text = out
+                summary_obj = Summary(meeting=meeting_obj, summary_text=final_output, transcript=transcript_obj)
                 summary_obj.save()
-                return Response({"summary": out})
+                return Response({"summary": final_output})
             except Exception as e:
                 return Response({"error": str(e)}, status=400)
-                
+
         except Exception as e:
-            # Handle errors
             return Response({"error": str(e)}, status=400)
