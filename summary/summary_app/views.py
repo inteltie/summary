@@ -10,7 +10,7 @@ from ctransformers import AutoModelForCausalLM
 import logging
 # from .custom_permission import ApiKeyPermission
 logger = logging.getLogger('django')
-
+ 
 
 class Summary(APIView):
     # permission_classes = [ApiKeyPermission]
@@ -71,10 +71,10 @@ class Summary(APIView):
                 print(output_i)
 
                 if output_items:  # Check if output_items is not empty
+                    output_i = re.sub(r'\s+', ' ', output_i.replace('\n', ' ')).strip()
                     summary.append(output_i)
 
-            out = ' '.join(summary)
-            out = re.sub(r'\s+', ' ', out.replace('\n', ' ')).strip()
+            out = '\n\n'.join(summary)
 
             try:
                 summary_obj = Summary(meeting=meeting_obj, summary_text=out, transcript=transcript_obj)
