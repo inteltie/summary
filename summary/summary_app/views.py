@@ -56,7 +56,7 @@ class SummaryView(APIView):
             chunks = [' '.join(words[i:i + max_chunk_length]) for i in range(0, len(words), max_chunk_length)]
 
             for chunk in chunks:
-                output = llm(f"[INST]Summarize the following text in third-person without using speaker labels or introductory phrases: {chunk}[/INST]")
+                output = llm(f"[INST]In less than 100 words, summarize the following text in third-person without using speaker labels or introductory phrases: {chunk}[/INST]")
                 output_i = ''.join(output)
                 output_i = self.remove_summary_prefix(output_i)
                 output_i = self.eliminate_repeats(output_i)
