@@ -1,5 +1,5 @@
 """
-URL configuration for summary project.
+URL configuration for summary_model project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -14,15 +14,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import include, path , re_path
-from django.conf import settings
-from django.conf.urls.static import static
-
 from django.contrib import admin
 from django.urls import path
-from summary_app.views import *
+from summary.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/meetings/<int:meeting_id>/summary/', Summary.as_view(), name='summary')
+    path('api/v1/meetings/<int:meeting_id>/summary/', Summary.as_view(), name='summary'),
+    path('api/v1/meetings/<int:meeting_id>/update_summary/', SummaryUpdateView.as_view(), name='summary_update'),
 ]
