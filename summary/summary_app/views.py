@@ -16,7 +16,7 @@ class SummaryView(APIView):
     # permission_classes = [ApiKeyPermission]
 
     def eliminate_repeats(self, text):
-        x = 1  # The threshold for the number of consecutive repeats
+        x = 3  # The threshold for the number of consecutive repeats
 
         # Ensure x is valid
         if x < 1:
@@ -58,7 +58,7 @@ class SummaryView(APIView):
             chunks = [' '.join(words[i:i + max_chunk_length]) for i in range(0, len(words), max_chunk_length)]
 
             for chunk in chunks:
-                output = llm(f"[INST]Very briefly, extract important discussions and announcements discussed in the following text: {chunk}[/INST]")
+                output = llm(f"[INST]In less than 20 words, briefly, extract important discussions and important announcements discussed in the following meeting conversation: {chunk}[/INST]")
                 output_i = ''.join(output)
                 output_i = self.remove_summary_prefix(output_i)
                 output_i = self.eliminate_repeats(output_i)
