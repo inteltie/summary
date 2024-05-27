@@ -29,8 +29,9 @@ class SummaryView(APIView):
     def extract_text_from_transcript(self, transcript):
         try:
             data = json.loads(transcript)
-            text_values = [item["text"] for item in data]
-            return " ".join(text_values)
+            text_values = [f'{item["speaker"]}: {item["text"]}' for item in data]
+            out = " ".join(text_values)
+            out = out.replace('Unidentified ', '')
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
             return None
