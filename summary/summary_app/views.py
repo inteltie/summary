@@ -32,6 +32,7 @@ class SummaryView(APIView):
             text_values = [f'{item["speaker"]}: {item["text"]}' for item in data]
             out = " ".join(text_values)
             out = out.replace('Unidentified ', '')
+            return out
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
             return None
