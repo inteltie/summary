@@ -58,7 +58,7 @@ class SummaryView(APIView):
             chunks = [' '.join(words[i:i + max_chunk_length]) for i in range(0, len(words), max_chunk_length)]
 
             for chunk in chunks:
-                output = llm(f"[INST]In less than 20 words, briefly, extract important discussions and important announcements discussed in the following meeting conversation: {chunk}[/INST]")
+                output = llm(f"[INST]Based on the provided transcript, identify and generate precise summary? I should cover everthing within 50 words Transcript: {chunk}[/INST]")
                 output_i = ''.join(output)
                 output_i = self.remove_summary_prefix(output_i)
                 output_i = self.eliminate_repeats(output_i)
