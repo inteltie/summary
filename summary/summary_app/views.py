@@ -50,7 +50,7 @@ class SummaryView(APIView):
             raw_transcript = transcript_obj.raw_transcript
             transcript_text = self.extract_text_from_transcript(raw_transcript)
 
-            llm = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.2-GGUF", model_file="mistral-7b-instruct-v0.2.Q4_K_M.gguf", gpu_layers=50)
+            llm = AutoModelForCausalLM.from_pretrained("bartowski/Meta-Llama-3-8B-Instruct-GGUF", model_file="llama-pro-8b.Q5_K_M.gguf", gpu_layers=50)
             max_chunk_length = 256
             summary = []
 
@@ -58,7 +58,7 @@ class SummaryView(APIView):
             chunks = [' '.join(words[i:i + max_chunk_length]) for i in range(0, len(words), max_chunk_length)]
 
             for chunk in chunks:
-                output = llm(f"[INST]In less than 20 words, briefly, extract important discussions and important announcements discussed in the following meeting conversation: {chunk}[/INST]")
+                output = llm(f"[INST]In less than 100 words, summarize the following meeting conversation in third person, focusing only on the information provided. Do not use introductory phrases or add any additional information. Text: {chunk}[/INST]")
                 output_i = ''.join(output)
                 output_i = self.remove_summary_prefix(output_i)
                 output_i = self.eliminate_repeats(output_i)
