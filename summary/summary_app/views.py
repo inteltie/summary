@@ -50,7 +50,7 @@ class SummaryView(APIView):
             raw_transcript = transcript_obj.raw_transcript
             transcript_text = self.extract_text_from_transcript(raw_transcript)
 
-            llm = AutoModelForCausalLM.from_pretrained("TheBloke/LLaMA-Pro-8B-GGUF", model_file="llama-pro-8b.Q5_K_M.gguf", gpu_layers=50)
+            llm = AutoModelForCausalLM.from_pretrained("bartowski/Meta-Llama-3-8B-Instruct-GGUF", model_file="Meta-Llama-3-8B-Instruct-Q5_K_M.gguf", gpu_layers=50)
             max_chunk_length = 256
             summary = []
 
