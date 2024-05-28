@@ -24,5 +24,5 @@ from summary_app.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/meetings/<int:meeting_id>/important_decisons/', SummaryView.as_view(), name='summary')
+    path('api/v1/meetings/<int:meeting_id>/summary/', SummaryView.as_view(), name='summary')
 ]
